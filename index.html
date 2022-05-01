@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>巴拉拉能量</title>
+    <style>
+        body{
+            width: 100vw;
+            height: 100vh;
+            background-color: #000;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="can"></canvas>
+
+    <script>
+        var canvas = document.getElementById('can');
+        var context = canvas.getContext('2d');
+        var circleList = [];
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        canvas.addEventListener('mousemove',function(e){
+            circleList.push(new Circle(e.clientX,e.clientY))
+        })
+        function random(min,max){
+            return Math.round(Math.random() * (max - min) + min);
+        }
+        function Circle(x,y){
+            this.x = x;
+            this.y = y;
+            this.vx = (Math.random() - 0.5)*3;
+            this.vy = (Math.random() - 0.5)*3;
+            this.color = 'rgb(' + random(0,255) + ',' + random(0,255) + ',' + random(0,255) + ')';
+            this.a = 1;
+        }
+        Circle.prototype= {
+            draw(){
+                context.beginPath();
+                context.fillStyle  = this.color;
+                context.globalCompositeOperation = 'lighter';
+				context.globalAlpha = this.a;
+                context.arc(this.x,this.y,30,0,Math.PI*2);
+                context.fill();
+                this.update();
+            },
+            update(){
+                this.x += this.vx;
+                this.y += this.vy;
+                this.a *= 0.98;
+            }
+        }
+        function render(){
+            context.clearRect(0,0,canvas.width,canvas.height);
+            circleList.forEach(function(ele,index){
+                ele.draw();
+                if(ele.a < 0.5){
+                    circleList.splice(index,1);
+                }
+            })
+            requestAnimationFrame(render);
+        }
+        render();
+    </script>
+</body>
+</html>
